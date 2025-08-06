@@ -110,17 +110,36 @@ impl eframe::App for TextEditorApp {
             // Text editor area
             ui.add_space(25.0);
             
-            let text_edit = egui::TextEdit::multiline(&mut self.text)
-                .desired_width(f32::INFINITY)
-                .desired_rows(30)
-                .font(egui::TextStyle::Monospace);
-            
-            let response = ui.add(text_edit);
-            
-            // Track modifications
-            if response.changed() {
-                self.is_modified = true;
-            }
+            // Create a scroll area for the text editor
+            egui::ScrollArea::both().show(ui, |ui| {
+                // Calculate the width needed based on the longest line
+                let font_id = egui::TextStyle::Monospace.resolve(&ui.style());
+                let mut max_width: f32 = 0.0;
+                
+                for line in self.text.lines() {
+                    let line_width = ui.fonts(|fonts| fonts.layout_no_wrap(line.to_string(), font_id.clone(), egui::Color32::WHITE).rect.width());
+                    max_width = max_width.max(line_width);
+                }
+                
+                // Add some padding and ensure minimum width
+                let content_width = (max_width + 50.0).max(ui.available_width());
+                
+                // Create a container that's exactly as wide as needed
+                ui.horizontal(|ui| {
+                    ui.set_min_width(content_width);
+                    let text_edit = egui::TextEdit::multiline(&mut self.text)
+                        .desired_width(f32::INFINITY)
+                        .desired_rows(30)
+                        .font(egui::TextStyle::Monospace);
+                    
+                    let response = ui.add(text_edit);
+                    
+                    // Track modifications
+                    if response.changed() {
+                        self.is_modified = true;
+                    }
+                });
+            });
             
             // Keyboard shortcuts
             if ui.input(|i| i.key_pressed(egui::Key::S) && i.modifiers.ctrl) {
