@@ -8,7 +8,7 @@ use winreg::enums::*;
 use winreg::RegKey;
 
 fn load_icon() -> IconData {
-    // Try to load icon from assets/icon.png, fallback to default
+    // Load icon from assets/icon.png
     if let Ok(icon_bytes) = std::fs::read("assets/icon.png") {
         if let Ok(image) = image::load_from_memory(&icon_bytes) {
             let rgba = image.to_rgba8();
@@ -21,18 +21,11 @@ fn load_icon() -> IconData {
         }
     }
     
-    // Fallback: create a simple default icon
-    let icon_data = vec![
-        0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255,
-        0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255,
-        0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 255,
-        0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255,
-    ];
-    
+    // If icon loading fails, return a minimal transparent icon
     IconData {
-        rgba: icon_data,
-        width: 4,
-        height: 4,
+        rgba: vec![0, 0, 0, 0], // Transparent 1x1 pixel
+        width: 1,
+        height: 1,
     }
 }
 
@@ -120,10 +113,6 @@ impl eframe::App for TextEditorApp {
                     #[cfg(windows)]
                     if ui.button("Register as Context Menu Editor").clicked() {
                         self.register_as_context_menu_editor();
-                    }
-                    #[cfg(windows)]
-                    if ui.button("Unregister Context Menu").clicked() {
-                        self.unregister_context_menu_editor();
                     }
                     
                     ui.separator();
@@ -264,13 +253,4 @@ impl TextEditorApp {
         }
     }
     
-    #[cfg(windows)]
-    fn unregister_context_menu_editor(&self) {
-        let hkcu = RegKey::predef(HKEY_CURRENT_USER);
-        
-        // Remove the context menu entry
-        if let Ok(_) = hkcu.delete_subkey("Software\\Classes\\*\\shell\\AmendTextEditor") {
-            // Successfully removed
-        }
-    }
 } 
