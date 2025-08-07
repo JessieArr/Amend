@@ -13,27 +13,25 @@ fn main() -> Result<(), eframe::Error> {
         let args: Vec<String> = env::args().collect();
         if args.len() > 1 {
             let file_path = &args[1];
-            if file_path.ends_with(".json") {
-                // Open the JSON file directly
-                let mut app = TextEditorApp::default();
-                if let Ok(contents) = fs::read_to_string(file_path) {
-                    app.text = contents;
-                    app.filename = Some(file_path.to_string());
-                    app.is_modified = false;
-                    
-                    let options = eframe::NativeOptions {
-                        viewport: egui::ViewportBuilder::default()
-                            .with_inner_size([800.0, 600.0])
-                            .with_min_inner_size([400.0, 300.0]),
-                        ..Default::default()
-                    };
-                    
-                    return eframe::run_native(
-                        "Amend Text Editor",
-                        options,
-                        Box::new(|_cc| Box::new(app)),
-                    );
-                }
+            // Open any file directly
+            let mut app = TextEditorApp::default();
+            if let Ok(contents) = fs::read_to_string(file_path) {
+                app.text = contents;
+                app.filename = Some(file_path.to_string());
+                app.is_modified = false;
+                
+                let options = eframe::NativeOptions {
+                    viewport: egui::ViewportBuilder::default()
+                        .with_inner_size([800.0, 600.0])
+                        .with_min_inner_size([400.0, 300.0]),
+                    ..Default::default()
+                };
+                
+                return eframe::run_native(
+                    "Amend Text Editor",
+                    options,
+                    Box::new(|_cc| Box::new(app)),
+                );
             }
         }
     }
@@ -88,8 +86,8 @@ impl eframe::App for TextEditorApp {
                     }
                     
                     #[cfg(windows)]
-                    if ui.button("Register as JSON Editor").clicked() {
-                        self.register_as_json_editor();
+                    if ui.button("Register as Context Menu Editor").clicked() {
+                        self.register_as_context_menu_editor();
                     }
                     
                     ui.separator();
@@ -204,30 +202,20 @@ impl TextEditorApp {
     }
     
     #[cfg(windows)]
-    fn register_as_json_editor(&self) {
+    fn register_as_context_menu_editor(&self) {
         if let Ok(exe_path) = env::current_exe() {
             let exe_path_str = exe_path.to_string_lossy().to_string();
             
-            // Register file association for .json files
+            // Register as a context menu option for all files
             let hkcu = RegKey::predef(HKEY_CURRENT_USER);
             
-            // Create .json file association
-            if let Ok((json_key, _)) = hkcu.create_subkey("Software\\Classes\\.json") {
-                json_key.set_value("", &"AmendTextEditor.json").unwrap_or_default();
-            }
-            
-            // Create application key
-            if let Ok((app_key, _)) = hkcu.create_subkey("Software\\Classes\\AmendTextEditor.json") {
-                app_key.set_value("", &"Amend Text Editor").unwrap_or_default();
+            // Add to the * file type (all files)
+            if let Ok((all_files_key, _)) = hkcu.create_subkey("Software\\Classes\\*\\shell\\AmendTextEditor") {
+                all_files_key.set_value("", &"Edit with Amend").unwrap_or_default();
                 
-                // Set default icon
-                if let Ok((icon_key, _)) = app_key.create_subkey("DefaultIcon") {
-                    icon_key.set_value("", &format!("{},0", exe_path_str)).unwrap_or_default();
-                }
-                
-                // Set shell command
-                if let Ok((shell_key, _)) = app_key.create_subkey("shell\\open\\command") {
-                    shell_key.set_value("", &format!("\"{}\" \"%1\"", exe_path_str)).unwrap_or_default();
+                // Set the command
+                if let Ok((command_key, _)) = all_files_key.create_subkey("command") {
+                    command_key.set_value("", &format!("\"{}\" \"%1\"", exe_path_str)).unwrap_or_default();
                 }
             }
         }
