@@ -3,30 +3,50 @@ use std::fs;
 use std::env;
 use std::sync::{Arc, Mutex};
 use std::thread;
-use egui::IconData;
 #[cfg(windows)]
 use winreg::enums::*;
 #[cfg(windows)]
 use winreg::RegKey;
+#[cfg(windows)]
+use std::path::Path;
 
-fn load_icon() -> IconData {
-    // Return a minimal transparent icon immediately
-    // We'll load the real icon asynchronously later if needed
-    IconData {
-        rgba: vec![0, 0, 0, 0], // Transparent 1x1 pixel
-        width: 1,
-        height: 1,
+
+
+#[cfg(windows)]
+fn load_application_icon() -> Option<egui::IconData> {
+    // Try to load the icon from the assets directory
+    let icon_path = Path::new("assets/icon.ico");
+    if icon_path.exists() {
+        // Use the image crate to decode the ICO file
+        if let Ok(img) = image::open(icon_path) {
+            let rgba = img.to_rgba8();
+            let (width, height) = rgba.dimensions();
+            
+            return Some(egui::IconData {
+                rgba: rgba.into_raw(),
+                width: width as u32,
+                height: height as u32,
+            });
+        }
     }
+    None
 }
 
 fn main() -> Result<(), eframe::Error> {
-    let options = eframe::NativeOptions {
+    let mut options = eframe::NativeOptions {
         viewport: egui::ViewportBuilder::default()
             .with_inner_size([800.0, 600.0])
-            .with_min_inner_size([400.0, 300.0])
-            .with_icon(load_icon()),
+            .with_min_inner_size([400.0, 300.0]),
         ..Default::default()
     };
+    
+    // Set the application icon on Windows
+    #[cfg(windows)]
+    {
+        if let Some(icon_data) = load_application_icon() {
+            options.viewport = options.viewport.with_icon(icon_data);
+        }
+    }
     
     // Check for command line arguments
     #[cfg(windows)]
@@ -97,7 +117,7 @@ impl eframe::App for TextEditorApp {
                     self.start_loading_file(file_path);
                 }
             }
-        }
+                }
         
         // Check if file loading is complete
         if self.is_loading {
