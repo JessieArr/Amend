@@ -3,13 +3,18 @@ extern crate winres;
 
 #[cfg(windows)]
 fn main() {
-    // Set the subsystem to Windows GUI to hide the console window
+    let mut res = winres::WindowsResource::new();
+    
+    // Only set icon if the file exists
+    if std::path::Path::new("assets/icon.ico").exists() {
+        res.set_icon("assets/icon.ico");
+    }
+    
+    res.compile().unwrap();
+    
+    // Set the subsystem to Windows GUI to hide console window
     println!("cargo:rustc-link-arg=/SUBSYSTEM:WINDOWS");
     println!("cargo:rustc-link-arg=/ENTRY:mainCRTStartup");
-    
-    let mut res = winres::WindowsResource::new();
-    res.set_manifest_file("manifest.xml");
-    res.compile().unwrap();
 }
 
 #[cfg(not(windows))]

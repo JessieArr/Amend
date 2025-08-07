@@ -29,4 +29,5 @@ eframe = { version = "0.26.2", default-features = false, features = ["default_fo
 egui = { version = "0.26.2", default-features = false, features = ["default_fonts"] }
 egui_extras = { version = "0.26.2", default-features = false }
 rfd = { version = "0.13", default-features = false }
-winreg = "0.52" 
+winreg = "0.52"
+image = "0.24" 
