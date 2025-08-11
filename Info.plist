@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>CFBundleExecutable</key>
+    <string>amend-editor</string>
+    <key>CFBundleIdentifier</key>
+    <string>com.amend.text-editor</string>
+    <key>CFBundleName</key>
+    <string>Amend</string>
+    <key>CFBundleDisplayName</key>
+    <string>Amend Text Editor</string>
+    <key>CFBundleVersion</key>
+    <string>1.0</string>
+    <key>CFBundleShortVersionString</key>
+    <string>1.0</string>
+    <key>CFBundlePackageType</key>
+    <string>APPL</string>
+    <key>CFBundleSignature</key>
+    <string>????</string>
+    <key>CFBundleInfoDictionaryVersion</key>
+    <string>6.0</string>
+    <key>CFBundleDevelopmentRegion</key>
+    <string>en</string>
+    
+    <!-- File associations -->
+    <key>CFBundleDocumentTypes</key>
+    <array>
+        <dict>
+            <key>CFBundleTypeName</key>
+            <string>Text Document</string>
+            <key>CFBundleTypeExtensions</key>
+            <array>
+                <string>txt</string>
+                <string>md</string>
+                <string>rs</string>
+                <string>py</string>
+                <string>js</string>
+                <string>html</string>
+                <string>css</string>
+                <string>json</string>
+                <string>xml</string>
+                <string>*</string>
+            </array>
+            <key>CFBundleTypeRole</key>
+            <string>Editor</string>
+            <key>LSHandlerRank</key>
+            <string>Owner</string>
+            <key>CFBundleTypeIconFile</key>
+            <string>icon.icns</string>
+        </dict>
+    </array>
+    
+    <!-- Make it appear in "Open With" menus -->
+    <key>UTExportedTypeDeclarations</key>
+    <array>
+        <dict>
+            <key>UTTypeIdentifier</key>
+            <string>public.text</string>
+            <key>UTTypeDescription</key>
+            <string>Text Document</string>
+            <key>UTTypeConformsTo</key>
+            <array>
+                <string>public.data</string>
+            </array>
+        </dict>
+    </array>
+    
+    <!-- App icon -->
+    <key>CFBundleIconFile</key>
+    <string>icon.icns</string>
+    
+    <!-- Hide dock icon when no windows are open -->
+    <key>LSUIElement</key>
+    <false/>
+    
+    <!-- Enable file opening via command line -->
+    <key>CFBundleURLTypes</key>
+    <array>
+        <dict>
+            <key>CFBundleURLName</key>
+            <string>File URL</string>
+            <key>CFBundleURLSchemes</key>
+            <array>
+                <string>file</string>
+            </array>
+        </dict>
+    </array>
+</dict>
+</plist> 

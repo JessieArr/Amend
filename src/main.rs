@@ -1,6 +1,6 @@
 use eframe::egui;
 use std::fs;
-#[cfg(windows)]
+#[cfg(any(windows, target_os = "macos"))]
 use std::env;
 use std::sync::{Arc, Mutex};
 use std::thread;
@@ -51,6 +51,25 @@ fn main() -> Result<(), eframe::Error> {
     
     // Check for command line arguments
     #[cfg(windows)]
+    {
+        let args: Vec<String> = env::args().collect();
+        if args.len() > 1 {
+            let file_path = &args[1];
+            let mut app = TextEditorApp::default();
+            
+            // Store the file path to load after UI is ready
+            app.pending_file_to_load = Some(file_path.to_string());
+            
+            return eframe::run_native(
+                "Amend Text Editor",
+                options,
+                Box::new(|_cc| Box::new(app)),
+            );
+        }
+    }
+    
+    // Check for command line arguments on macOS
+    #[cfg(target_os = "macos")]
     {
         let args: Vec<String> = env::args().collect();
         if args.len() > 1 {
