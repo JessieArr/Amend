@@ -39,7 +39,7 @@ fn main() -> Result<(), eframe::Error> {
             return eframe::run_native(
                 "Amend Text Editor",
                 options,
-                Box::new(|_cc| Box::new(app)),
+                Box::new(|_cc| Ok(Box::new(app))),
             );
         }
     }
@@ -58,7 +58,7 @@ fn main() -> Result<(), eframe::Error> {
             return eframe::run_native(
                 "Amend Text Editor",
                 options,
-                Box::new(|_cc| Box::new(app)),
+                Box::new(|_cc| Ok(Box::new(app))),
             );
         }
     }
@@ -66,6 +66,6 @@ fn main() -> Result<(), eframe::Error> {
     eframe::run_native(
         "Amend Text Editor",
         options,
-        Box::new(|_cc| Box::new(TextEditorApp::default())),
+        Box::new(|_cc| Ok(Box::new(TextEditorApp::default()))),
     )
 } 
