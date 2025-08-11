@@ -1,5 +1,6 @@
 use eframe::egui;
 use std::fs;
+#[cfg(windows)]
 use std::env;
 use std::sync::{Arc, Mutex};
 use std::thread;
@@ -33,7 +34,7 @@ fn load_application_icon() -> Option<egui::IconData> {
 }
 
 fn main() -> Result<(), eframe::Error> {
-    let mut options = eframe::NativeOptions {
+    let options = eframe::NativeOptions {
         viewport: egui::ViewportBuilder::default()
             .with_inner_size([800.0, 600.0])
             .with_min_inner_size([400.0, 300.0]),
