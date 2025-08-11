@@ -14,7 +14,7 @@ echo "✅ Build completed successfully!"
 
 # Create the app bundle
 echo "📦 Creating macOS app bundle..."
-./create_bundle.sh
+./create_bundle_mac.sh
 
 echo ""
 echo "🎉 All done! Your app bundle is ready at: target/release/Amend.app"
